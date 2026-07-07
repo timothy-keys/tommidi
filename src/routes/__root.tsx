@@ -83,9 +83,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "MIDI Piano Visualizer" },
       { name: "description", content: "Transparent 88-key MIDI piano visualizer for YouTube lesson videos. Records to WebM with alpha for easy Premiere overlay." },
       { property: "og:title", content: "MIDI Piano Visualizer" },
-      { property: "og:description", content: "Transparent 88-key MIDI piano visualizer with recording for Premiere overlay." },
+      { property: "og:description", content: "Transparent 88-key MIDI piano visualizer for YouTube lesson videos. Records to WebM with alpha for easy Premiere overlay." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "MIDI Piano Visualizer" },
+      { name: "twitter:description", content: "Transparent 88-key MIDI piano visualizer for YouTube lesson videos. Records to WebM with alpha for easy Premiere overlay." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/2c42dc9d-b518-440e-ae21-9830781ac73b/id-preview-2da226e2--24381189-277d-4202-91cb-9d3041b28239.lovable.app-1783441555227.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/2c42dc9d-b518-440e-ae21-9830781ac73b/id-preview-2da226e2--24381189-277d-4202-91cb-9d3041b28239.lovable.app-1783441555227.png" },
     ],
     links: [
       {
