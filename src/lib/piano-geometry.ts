@@ -1,4 +1,4 @@
-// 88-key piano: MIDI 21 (A0) .. 108 (C8)
+// 88-key piano range: MIDI 21 (A0) .. 108 (C8). Callers may restrict this range.
 export const FIRST_MIDI = 21;
 export const LAST_MIDI = 108;
 
@@ -13,49 +13,68 @@ export function isBlackKey(n: number): boolean {
   return BLACK_SET.has(((n % 12) + 12) % 12);
 }
 
+export function midiToNoteName(n: number): string {
+  const octave = Math.floor(n / 12) - 1;
+  return `${midiToPitchClass(n)}${octave}`;
+}
+
 // Layout dimensions (in SVG user units).
 export const WHITE_KEY_WIDTH = 24;
 export const WHITE_KEY_HEIGHT = 150;
 export const BLACK_KEY_WIDTH = 14;
 export const BLACK_KEY_HEIGHT = 95;
-export const LABEL_STRIP_HEIGHT = 44;
+// Vertical band reserved for note labels above the keys. Small on purpose.
+export const LABEL_AREA_HEIGHT = 18;
 
-// Count white keys before this midi note (from FIRST_MIDI).
-function whiteKeyIndex(n: number): number {
+export type PianoGeometry = {
+  firstMidi: number;
+  lastMidi: number;
+  whiteKeyCount: number;
+  keyboardWidth: number;
+  totalHeight: number;
+  notes: number[];
+  midiToKeyX: (n: number) => number;
+  midiToCenterX: (n: number) => number;
+};
+
+export function createPianoGeometry(firstMidi: number, lastMidi: number): PianoGeometry {
+  const notes: number[] = [];
+  for (let i = firstMidi; i <= lastMidi; i++) notes.push(i);
+
+  // Precompute cumulative white-key index for each midi note in range.
+  const whiteIdx = new Map<number, number>();
   let count = 0;
-  for (let i = FIRST_MIDI; i < n; i++) {
-    if (!isBlackKey(i)) count++;
+  for (const n of notes) {
+    whiteIdx.set(n, count);
+    if (!isBlackKey(n)) count++;
   }
-  return count;
-}
+  const whiteKeyCount = count;
+  const keyboardWidth = whiteKeyCount * WHITE_KEY_WIDTH;
 
-export const WHITE_KEY_COUNT = (() => {
-  let c = 0;
-  for (let i = FIRST_MIDI; i <= LAST_MIDI; i++) if (!isBlackKey(i)) c++;
-  return c;
-})();
+  const midiToKeyX = (n: number): number => {
+    const idx = whiteIdx.get(n);
+    if (idx === undefined) return 0;
+    if (!isBlackKey(n)) return idx * WHITE_KEY_WIDTH;
+    // Black key sits between the previous and next white key.
+    // whiteIdx for a black key equals the number of white keys before it,
+    // so the previous white key starts at (idx - 1) * WHITE_KEY_WIDTH.
+    const prevWhiteX = (idx - 1) * WHITE_KEY_WIDTH;
+    return prevWhiteX + WHITE_KEY_WIDTH - BLACK_KEY_WIDTH / 2;
+  };
 
-export const KEYBOARD_WIDTH = WHITE_KEY_COUNT * WHITE_KEY_WIDTH;
+  const midiToCenterX = (n: number): number => {
+    const w = isBlackKey(n) ? BLACK_KEY_WIDTH : WHITE_KEY_WIDTH;
+    return midiToKeyX(n) + w / 2;
+  };
 
-// Returns the left x of the key's rectangle.
-export function midiToKeyX(n: number): number {
-  if (!isBlackKey(n)) {
-    return whiteKeyIndex(n) * WHITE_KEY_WIDTH;
-  }
-  // Black key sits between the previous white key and the next.
-  const prevWhiteIdx = whiteKeyIndex(n) - 1;
-  const prevWhiteX = prevWhiteIdx * WHITE_KEY_WIDTH;
-  return prevWhiteX + WHITE_KEY_WIDTH - BLACK_KEY_WIDTH / 2;
-}
-
-// Center x of the key (used for labels).
-export function midiToCenterX(n: number): number {
-  const w = isBlackKey(n) ? BLACK_KEY_WIDTH : WHITE_KEY_WIDTH;
-  return midiToKeyX(n) + w / 2;
-}
-
-export function allMidiNotes(): number[] {
-  const out: number[] = [];
-  for (let i = FIRST_MIDI; i <= LAST_MIDI; i++) out.push(i);
-  return out;
+  return {
+    firstMidi,
+    lastMidi,
+    whiteKeyCount,
+    keyboardWidth,
+    totalHeight: LABEL_AREA_HEIGHT + WHITE_KEY_HEIGHT,
+    notes,
+    midiToKeyX,
+    midiToCenterX,
+  };
 }
