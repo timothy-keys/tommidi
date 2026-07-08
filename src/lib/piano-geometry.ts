@@ -19,6 +19,7 @@ export const WHITE_KEY_HEIGHT = 150;
 export const BLACK_KEY_WIDTH = 14;
 export const BLACK_KEY_HEIGHT = 95;
 export const LABEL_STRIP_HEIGHT = 44;
+export const CHORD_AREA_HEIGHT = 110;
 
 // Count white keys before this midi note (from FIRST_MIDI).
 function whiteKeyIndex(n: number): number {

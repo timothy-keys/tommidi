@@ -2,11 +2,16 @@ import { useEffect, useRef, useState } from "react";
 import { Keyboard } from "./Keyboard";
 import { useMidiInput } from "../hooks/useMidiInput";
 import { SvgRecorder, downloadBlob } from "../lib/recorder";
-import { KEYBOARD_WIDTH, LABEL_STRIP_HEIGHT, WHITE_KEY_HEIGHT } from "../lib/piano-geometry";
+import {
+  CHORD_AREA_HEIGHT,
+  KEYBOARD_WIDTH,
+  LABEL_STRIP_HEIGHT,
+  WHITE_KEY_HEIGHT,
+} from "../lib/piano-geometry";
 
 const RENDER_WIDTH = 1920;
 const RENDER_HEIGHT = Math.round(
-  (RENDER_WIDTH * (LABEL_STRIP_HEIGHT + WHITE_KEY_HEIGHT)) / KEYBOARD_WIDTH,
+  (RENDER_WIDTH * (CHORD_AREA_HEIGHT + LABEL_STRIP_HEIGHT + WHITE_KEY_HEIGHT)) / KEYBOARD_WIDTH,
 );
 
 export function PianoVisualizer() {
