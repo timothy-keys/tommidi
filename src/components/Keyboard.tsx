@@ -40,6 +40,18 @@ export function Keyboard({ activeNotes }: Props) {
       preserveAspectRatio="xMidYMax meet"
       style={{ display: "block" }}
     >
+      {/* Live-only black backdrop behind chord text (stripped from exports) */}
+      {chords[0] && (
+        <rect
+          data-live-only="true"
+          x={0}
+          y={0}
+          width={KEYBOARD_WIDTH}
+          height={CHORD_AREA_HEIGHT}
+          fill="#000000"
+        />
+      )}
+
       {/* Chord names (transparent background, white text) */}
       {chords[0] && (
         <text
