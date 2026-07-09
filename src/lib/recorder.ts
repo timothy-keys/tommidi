@@ -27,7 +27,10 @@ export class SvgRecorder {
   }
 
   private pickMime(): string {
+    // Prefer MP4 when the browser supports it; fall back to WebM (VP9 supports alpha).
     const candidates = [
+      "video/mp4;codecs=avc1",
+      "video/mp4",
       "video/webm;codecs=vp9",
       "video/webm;codecs=vp8",
       "video/webm",
@@ -38,11 +41,17 @@ export class SvgRecorder {
     return "";
   }
 
+  extensionForMime(): string {
+    return this.mimeType.startsWith("video/mp4") ? "mp4" : "webm";
+  }
+
   private renderFrame = () => {
     const clone = this.svg.cloneNode(true) as SVGSVGElement;
     clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
     clone.setAttribute("width", String(this.width));
     clone.setAttribute("height", String(this.height));
+    // Strip elements meant only for the on-screen preview (e.g. chord backdrop).
+    clone.querySelectorAll("[data-live-only]").forEach((el) => el.remove());
     const xml = new XMLSerializer().serializeToString(clone);
     const svg64 = btoa(unescape(encodeURIComponent(xml)));
     const url = `data:image/svg+xml;base64,${svg64}`;
