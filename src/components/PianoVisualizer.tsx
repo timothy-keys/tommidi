@@ -33,7 +33,8 @@ export function PianoVisualizer() {
       const rec = new SvgRecorder(svg as SVGSVGElement, RENDER_WIDTH, RENDER_HEIGHT);
       rec.onStop = (blob) => {
         const ts = new Date().toISOString().replace(/[:.]/g, "-");
-        downloadBlob(blob, `midi-visualizer-${ts}.webm`);
+        const ext = rec.extensionForMime();
+        downloadBlob(blob, `midi-visualizer-${ts}.${ext}`);
       };
       rec.start();
       recorderRef.current = rec;
