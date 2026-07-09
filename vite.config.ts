@@ -28,6 +28,12 @@ export default defineConfig({
         workbox: {
           navigateFallback: "/",
           navigateFallbackDenylist: [/^\/~oauth/, /^\/api\//],
+          globPatterns: [
+            "**/*.{js,css,html,ico,png,svg,webp,woff,woff2,ttf,json,webmanifest}",
+          ],
+          cleanupOutdatedCaches: true,
+          clientsClaim: true,
+          skipWaiting: true,
           runtimeCaching: [
             {
               urlPattern: ({ request }) => request.mode === "navigate",
